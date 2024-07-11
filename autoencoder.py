@@ -3,12 +3,12 @@ from keras import Sequential
 from keras.layers import Conv2D, Flatten, UpSampling2D, Reshape, Input # type: ignore
 import pandas as pd
 import numpy as np
-from clearml import Task, Dataset, OutputModel
+from clearml import Task, Dataset, TaskTypes
 
 params = {
     'optimizer': 'adam',
     'loss_function': 'mse',
-    'epochs': 5,
+    'epochs': 10,
     'batch_size': 128,
     'version' : 1,
     'metrics': ['mse','accuracy'],
@@ -42,7 +42,7 @@ def build_decoder():
 
     dec = Sequential(name="dec_1")
 
-    dec.add(Input((60,)))
+    dec.add(Input((3*2*params['filters'],)))
     dec.add(Reshape((3,2,params['filters'])))
     dec.add(Conv2D(filters=1,kernel_size=((2,2)),activation="relu",padding="same"))
 
@@ -51,7 +51,7 @@ def build_decoder():
 
 if __name__ == '__main__':
 
-    task = Task.init(project_name='clearml-init', task_name='Autoencoder training')
+    task = Task.init(project_name='clearml-init', task_name='Autoencoder training', task_type=TaskTypes.training)
     
     tf.config.set_visible_devices([], 'GPU')
 
@@ -66,10 +66,10 @@ if __name__ == '__main__':
 
     inputShape = (train.shape[1],train.shape[2],train.shape[3])
 
-    ae = build_model(inputShape)
-
     # Log parameters
     task.connect(params)
+
+    ae = build_model(inputShape)
 
     ae.compile(optimizer=params['optimizer'], loss=params['loss_function'], metrics=params['metrics'])
 
@@ -87,8 +87,7 @@ if __name__ == '__main__':
     model_path = 'ae_version' + str(params['version']) + '.keras'
     ae.save(model_path)
 
-    # Log del modello salvato su ClearML
-    output_model = OutputModel(task=task, framework='Keras')
-    output_model.update_weights(weights_filename=model_path)
+    task.upload_artifact('model', model_path)
+    task.get_logger().report_text('Model weights logged successfully.')
 
     task.close()
