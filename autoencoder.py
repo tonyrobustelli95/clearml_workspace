@@ -8,9 +8,8 @@ from clearml import Task, Dataset, TaskTypes
 params = {
     'optimizer': 'adam',
     'loss_function': 'mse',
-    'epochs': 10,
+    'epochs': 5,
     'batch_size': 128,
-    'version' : 1,
     'metrics': ['mse','accuracy'],
     'filters': 10
 }
@@ -84,10 +83,11 @@ if __name__ == '__main__':
            batch_size=params['batch_size'],callbacks=[ClearMLCallback()])
 
     # Log model
-    model_path = 'ae_version' + str(params['version']) + '.keras'
-    ae.save(model_path)
+    base_path = '/Users/antoniorobustelli/Desktop/MLOps/clearml_workspace/models/'
+    model_path = 'ae_version' + str(task.id) + '.keras'
+    ae.save(base_path + model_path)
 
-    task.upload_artifact('model', model_path)
+    task.upload_artifact('ae_version' + str(task.id), model_path)
     task.get_logger().report_text('Model weights logged successfully.')
 
     task.close()
