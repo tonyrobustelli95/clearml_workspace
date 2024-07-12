@@ -58,10 +58,15 @@ if __name__ == '__main__':
     dataset = Dataset.get('25e9281ff0c44754ade05e4d16bf1292',alias='dataset7030')
     file_path = dataset.get_local_copy()
 
-    df = pd.read_csv(file_path + "/" + dataset.list_files()[1])
-    del df['category']
-    train = np.array(df.to_numpy())
+    df_train = pd.read_csv(file_path + "/" + dataset.list_files()[1])
+    del df_train['category']
+    train = np.array(df_train.to_numpy())
     train = train.reshape(train.shape[0],3,2,1)
+
+    df_test = pd.read_csv(file_path + "/" + dataset.list_files()[0])
+    del df_test['category']
+    test = np.array(df_test.to_numpy())
+    test = test.reshape(test.shape[0],3,2,1)
 
     inputShape = (train.shape[1],train.shape[2],train.shape[3])
 
@@ -79,7 +84,7 @@ if __name__ == '__main__':
                 for metric, value in logs.items():
                     task.get_logger().report_scalar(title=metric, series='training', value=value, iteration=epoch)
 
-    ae.fit(x=train,y=train,validation_data=(train,train),epochs=params['epochs'],
+    ae.fit(x=train,y=train,validation_data=(test,test),epochs=params['epochs'],
            batch_size=params['batch_size'],callbacks=[ClearMLCallback()])
 
     # Log model
