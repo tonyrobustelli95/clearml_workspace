@@ -30,9 +30,8 @@ pipeline.add_step(
     parents=['autoencoder_step'],
     parameter_override={
         'Args/task_id': id_step1
-    },
-    execution_queue=queue_name
+    }
 )
 
 # Runs the pipeline
-pipeline.start(queue=queue_name)
+pipeline.start(queue=queue_name,execution_queue=queue_name)
