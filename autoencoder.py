@@ -72,7 +72,6 @@ if __name__ == '__main__':
 
     # Log parameters
     task.connect(params)
-    task.execute_remotely(queue_name="default")
 
     ae = build_model(inputShape)
 
