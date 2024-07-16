@@ -1,7 +1,6 @@
 from clearml import PipelineController, Task
 
 pipeline_task = Task.init(project_name='clearml-pipeline', task_name='Pipeline remote execution')
-pipeline_task.execute_remotely(queue_name="default")
 
 queue_name = "default"
 
@@ -25,9 +24,9 @@ id_step1 = pipeline.get_pipeline_dag()['autoencoder_step'].base_task_id
 
 # Add the second task to the pipeline by also passing the task_id of the first task
 pipeline.add_step(
-    name='optimizer_step',
+    name='info_step',
     base_task_project='clearml-init',
-    base_task_name="Autoencoder optimization",
+    base_task_name="Autoencoder info",
     parents=['autoencoder_step'],
     parameter_override={
         'Args/task_id': id_step1
@@ -36,4 +35,4 @@ pipeline.add_step(
 )
 
 # Runs the pipeline
-pipeline.start_locally(run_pipeline_steps_locally=False)
+pipeline.start(queue=queue_name)
