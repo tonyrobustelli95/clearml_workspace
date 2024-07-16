@@ -21,9 +21,9 @@ id_step1 = pipeline.get_pipeline_dag()['autoencoder_step'].base_task_id
 
 # Add the second task to the pipeline by also passing the task_id of the first task
 pipeline.add_step(
-    name='optimizer_step',
+    name='info_step',
     base_task_project='clearml-init',
-    base_task_name="Autoencoder optimization",
+    base_task_name="Autoencoder info",
     parents=['autoencoder_step'],
     parameter_override={
         'Args/task_id': id_step1
