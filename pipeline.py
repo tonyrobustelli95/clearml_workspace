@@ -39,4 +39,4 @@ pipeline.add_step(
 )
 
 # Runs the pipeline
-pipeline.start(queue="default")
+pipeline.start()
