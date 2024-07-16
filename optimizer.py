@@ -5,7 +5,8 @@ import argparse
 if __name__ == "__main__":
 
     task = Task.init(project_name='clearml-init', task_name='Autoencoder optimization', task_type=TaskTypes.optimizer)
-
+    task.execute_remotely(queue_name='default')
+    
     # Parse input arguments
     parser = argparse.ArgumentParser(description="Script to do optimization using a task ID")
     parser.add_argument('--task_id', type=str, help='task ID input')
