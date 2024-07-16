@@ -1,4 +1,6 @@
-from clearml import PipelineController
+from clearml import PipelineController, Task
+
+pipeline_task = Task.init(project_name='clearml-pipeline', task_name='Pipeline execution')
 
 # Defines the Pipeline's controller
 pipeline = PipelineController(
