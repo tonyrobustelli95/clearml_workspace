@@ -18,6 +18,7 @@ if __name__ == "__main__":
     objective_metric_title='accuracy',
     objective_metric_series='validation',
     objective_metric_sign='min',
+    execution_queue='default'
     )
 
     """
