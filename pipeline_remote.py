@@ -35,4 +35,4 @@ pipeline.add_step(
 )
 
 # Runs the pipeline
-pipeline.start(queue=queue_name)
+pipeline.start_locally(run_pipeline_steps_locally=False)
