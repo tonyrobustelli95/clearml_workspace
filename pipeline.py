@@ -7,7 +7,7 @@ def create_task(project_name, task_name, script, taskType):
         script=script,
         task_type=taskType
     )
-    Task.enqueue(task=task,queue_id='bc42c2376d344c4386a3041f8b63a0dc')
+    Task.enqueue(task=task,queue_name='default')
     return task
 
 task1 = create_task('clearml-init', "Autoencoder training", 'autoencoder.py', Task.TaskTypes.training)
@@ -37,4 +37,4 @@ pipeline.add_step(
 )
 
 # Runs the pipeline
-pipeline.start(queue='bc42c2376d344c4386a3041f8b63a0dc')
+pipeline.start(queue='default')

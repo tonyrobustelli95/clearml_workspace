@@ -51,6 +51,7 @@ def build_decoder():
 if __name__ == '__main__':
 
     task = Task.init(project_name='clearml-init', task_name='Autoencoder training', task_type=TaskTypes.training)
+    task.execute_remotely(queue_name="default")
 
     tf.config.set_visible_devices([], 'GPU')
 
