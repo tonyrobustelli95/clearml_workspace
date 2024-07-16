@@ -10,8 +10,8 @@ def create_task(project_name, task_name, script, taskType):
     task.execute_remotely(queue_name='default', exit_process=True)
     return task
 
-task1 = create_task('clearml-init', "Autoencoder training", {'entry_point': 'autoencoder.py'}, Task.TaskTypes.training)
-task2 = create_task('clearml-init', "Autoencoder optimization", {'entry_point': 'optimizer.py'}, Task.TaskTypes.optimizer)
+task1 = create_task('clearml-init', "Autoencoder training", 'autoencoder.py', Task.TaskTypes.training)
+task2 = create_task('clearml-init', "Autoencoder optimization", 'optimizer.py', Task.TaskTypes.optimizer)
 
 # Defines the Pipeline's controller
 pipeline = PipelineController(
