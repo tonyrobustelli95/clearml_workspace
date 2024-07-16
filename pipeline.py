@@ -23,7 +23,8 @@ pipeline = PipelineController(
 # Add the first task to the pipeline
 pipeline.add_step(
     name='autoencoder_step',
-    base_task_id=task1.id
+    base_task_id=task1.id,
+    execution_queue="default"
 )
 
 # Add the second task to the pipeline by also passing the task_id of the first task
@@ -33,7 +34,8 @@ pipeline.add_step(
     parents=['autoencoder_step'],
     parameter_override={
         'Args/task_id': task1.id
-    }
+    },
+     execution_queue="default"
 )
 
 # Runs the pipeline
