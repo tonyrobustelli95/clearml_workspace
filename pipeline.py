@@ -37,4 +37,4 @@ pipeline.add_step(
 )
 
 # Runs the pipeline local (with True) or remote (with False)
-pipeline.start_locally(run_pipeline_steps_locally=True)
+pipeline.start_locally(run_pipeline_steps_locally=False)
