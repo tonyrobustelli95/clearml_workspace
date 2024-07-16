@@ -1,17 +1,4 @@
-from clearml import Task, PipelineController
-
-def create_task(project_name, task_name, script, taskType):
-    task = Task.create(
-        project_name=project_name,
-        task_name=task_name,
-        script=script,
-        add_task_init_call = True,
-        task_type=taskType
-    )
-    return task
-
-task1 = create_task('clearml-init', "Autoencoder training", 'autoencoder.py', Task.TaskTypes.training)
-task2 = create_task('clearml-init', "Autoencoder optimization", 'optimizer.py', Task.TaskTypes.optimizer)
+from clearml import PipelineController
 
 # Defines the Pipeline's controller
 pipeline = PipelineController(
@@ -23,20 +10,23 @@ pipeline = PipelineController(
 # Add the first task to the pipeline
 pipeline.add_step(
     name='autoencoder_step',
-    base_task_id=task1.id,
-    execution_queue="default"
+    base_task_project='clearml-init',
+    base_task_name="Autoencoder training"
 )
+
+# Finds the task_id related to the previous step/task by navigating the pipeline's DAG
+id_step1 = pipeline.get_pipeline_dag()['autoencoder_step'].base_task_id
 
 # Add the second task to the pipeline by also passing the task_id of the first task
 pipeline.add_step(
     name='optimizer_step',
-    base_task_id=task2.id,
+    base_task_project='clearml-init',
+    base_task_name="Autoencoder optimization",
     parents=['autoencoder_step'],
     parameter_override={
-        'Args/task_id': task1.id
-    },
-     execution_queue="default"
+        'Args/task_id': id_step1
+    }
 )
 
 # Runs the pipeline
-pipeline.start(queue='default')
+pipeline.start_locally(run_pipeline_steps_locally=True)
