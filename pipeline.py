@@ -7,7 +7,7 @@ def create_task(project_name, task_name, script, taskType):
         script=script,
         task_type=taskType
     )
-    Task.enqueue(task=task,queue_name='default')
+    Task.enqueue(task=task,queue_id='bc42c2376d344c4386a3041f8b63a0dc')
     return task
 
 task1 = create_task('clearml-init', "Autoencoder training", 'autoencoder.py', Task.TaskTypes.training)
@@ -23,8 +23,7 @@ pipeline = PipelineController(
 # Add the first task to the pipeline
 pipeline.add_step(
     name='autoencoder_step',
-    base_task_id=task1.id,
-    execution_queue="default"
+    base_task_id=task1.id
 )
 
 # Add the second task to the pipeline by also passing the task_id of the first task
@@ -34,8 +33,7 @@ pipeline.add_step(
     parents=['autoencoder_step'],
     parameter_override={
         'Args/task_id': task1.id
-    },
-    execution_queue="default"
+    }
 )
 
 # Runs the pipeline
