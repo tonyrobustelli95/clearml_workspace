@@ -35,4 +35,4 @@ pipeline.add_step(
 )
 
 # Runs the pipeline
-pipeline.start_locally(run_pipeline_steps_locally=False)
+pipeline.start_locally(run_pipeline_steps_locally=True)
