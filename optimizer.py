@@ -13,8 +13,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     task_id = str(args.task_id)
 
-    task.execute_remotely(queue_name="default")
-
     optimizer = HyperParameterOptimizer(base_task_id=task_id, 
                                         hyper_parameters=[UniformIntegerParameterRange('filters', 5, 5)],
     objective_metric_title='accuracy',
