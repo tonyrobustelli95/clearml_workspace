@@ -1,6 +1,7 @@
 from clearml import PipelineController, Task
 
 pipeline_task = Task.init(project_name='clearml-pipeline', task_name='Pipeline remote execution')
+pipeline_task.execute_remotely(queue_name="default")
 
 queue_name = "default"
 
