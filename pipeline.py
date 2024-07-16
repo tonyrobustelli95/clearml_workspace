@@ -7,7 +7,7 @@ def create_task(project_name, task_name, script, taskType):
         script=script,
         task_type=taskType
     )
-    task.execute_remotely(queue_name='default', exit_process=True)
+    task.enqueue(queue_name='default')
     return task
 
 task1 = create_task('clearml-init', "Autoencoder training", 'autoencoder.py', Task.TaskTypes.training)
