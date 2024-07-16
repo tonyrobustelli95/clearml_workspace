@@ -7,7 +7,7 @@ def create_task(project_name, task_name, script, taskType):
         script=script,
         task_type=taskType
     )
-    task.enqueue(queue_name='default')
+    Task.enqueue(task=task,queue_name='default')
     return task
 
 task1 = create_task('clearml-init', "Autoencoder training", 'autoencoder.py', Task.TaskTypes.training)
