@@ -1,6 +1,6 @@
 import tensorflow as tf
 from keras import Sequential
-from keras.layers import Conv2D, Flatten, UpSampling2D, Reshape, Input # type: ignore
+from keras.layers import Conv2D, Conv2DTranspose, Flatten, MaxPool2D, Dense, Reshape, Input # type: ignore
 import pandas as pd
 import numpy as np
 from clearml import Task, Dataset, TaskTypes
@@ -8,10 +8,11 @@ from clearml import Task, Dataset, TaskTypes
 params = {
     'optimizer': 'adam',
     'loss_function': 'mse',
-    'epochs': 5,
+    'epochs': 10,
     'batch_size': 128,
-    'metrics': ['mse','accuracy'],
-    'filters': 10
+    'metrics': ['accuracy'],
+    'filters': 10,
+    'latent_dim': 4
 }
 
 def build_model(inputShape):
@@ -33,7 +34,9 @@ def build_encoder(inputShape):
 
     enc.add(Input((inputShape)))
     enc.add(Conv2D(filters=params['filters'],kernel_size=((2,2)),activation="relu",padding="same"))
+    enc.add(MaxPool2D((2,2)))
     enc.add(Flatten())
+    enc.add(Dense(params['latent_dim']))
 
     return enc
 
@@ -41,12 +44,13 @@ def build_decoder():
 
     dec = Sequential(name="dec_1")
 
-    dec.add(Input((3*2*params['filters'],)))
+    dec.add(Input((params['latent_dim'],)))
+    dec.add(Dense(3*2*params['filters']))
     dec.add(Reshape((3,2,params['filters'])))
-    dec.add(Conv2D(filters=1,kernel_size=((2,2)),activation="relu",padding="same"))
+    dec.add(Conv2DTranspose(filters=params['filters'],kernel_size=((2,2)),activation="relu",padding="same"))
+    dec.add(Conv2DTranspose(filters=1,kernel_size=((2,2)),activation="relu",padding="same"))
 
     return dec
-
 
 if __name__ == '__main__':
 
