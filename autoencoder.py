@@ -4,6 +4,7 @@ from keras.layers import Conv2D, Conv2DTranspose, Flatten, MaxPool2D, Dense, Res
 import pandas as pd
 import numpy as np
 from clearml import Task, Dataset, TaskTypes
+import matplotlib.pyplot as plt
 
 params = {
     'optimizer': 'adam',
@@ -14,6 +15,17 @@ params = {
     'filters': 10,
     'latent_dim': 4
 }
+
+def printHistory(history):
+
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.ylim(0, 1)
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train loss', 'test loss'], loc='upper right')
+
+    return plt
 
 def build_model(inputShape):
 
@@ -89,8 +101,10 @@ if __name__ == '__main__':
                 for metric, value in logs.items():
                     task.get_logger().report_scalar(title=metric, series='training', value=value, iteration=epoch)
 
-    ae.fit(x=train,y=train,validation_data=(test,test),epochs=params['epochs'],
+    history = ae.fit(x=train,y=train,validation_data=(test,test),epochs=params['epochs'],
            batch_size=params['batch_size'],callbacks=[ClearMLCallback()])
+    
+    task.get_logger().report_matplotlib_figure('Loss Plot', 'Train vs Test loss', printHistory(history).gcf())
 
     # Log model
     base_path = '/Users/antoniorobustelli/Desktop/MLOps/clearml_workspace/models/'
