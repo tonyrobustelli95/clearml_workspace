@@ -3,8 +3,38 @@ import pandas as pd
 import numpy as np
 from tensorflow.keras.models import load_model # type: ignore
 import argparse
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import MinMaxScaler
+
+# Provides classification metrics for the input ML-based models 
+def test_models(models, X_train, X_test, y_train, y_test):
+    for name, model in models.items():
+        print(f"\nModel: {name}")
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        
+        # Print Confusion Matrix
+        cm = confusion_matrix(y_test, y_pred)
+        print("Confusion Matrix:")
+        print(cm)
+        
+        # Print Classification Report
+        cr = classification_report(y_test, y_pred)
+        print("Classification Report:")
+        print(cr)
+
 
 if __name__ == '__main__':
+
+    task = Task.init(project_name='clearml-init', task_name='Autoencoder prediction')
+    task.execute_remotely(queue_name="default")
 
     # Parse input arguments
     parser = argparse.ArgumentParser(description="Script to do predictions using a model ID")
@@ -14,12 +44,19 @@ if __name__ == '__main__':
     model_id = str(args.model_id)
 
     # load dataset from clearml
-    dataset = Dataset.get('25e9281ff0c44754ade05e4d16bf1292',alias='dataset7030')
+    dataset = Dataset.get('e3c4b1f5295f4210a18fc9fd7a49b089',alias='dataset7030v2')
     file_path = dataset.get_local_copy()
 
-    df = pd.read_csv(file_path + "/" + dataset.list_files()[0])
-    del df['category']
-    test = np.array(df.to_numpy())
+    df_train = pd.read_csv(file_path + "/" + dataset.list_files()[1])
+    y_train = np.array(df_train['category'])
+    del df_train['category']
+    train = np.array(df_train.to_numpy())
+    train = train.reshape(train.shape[0],3,2,1)
+
+    df_test = pd.read_csv(file_path + "/" + dataset.list_files()[0])
+    y_test = np.array(df_test['category'])
+    del df_test['category']
+    test = np.array(df_test.to_numpy())
     test = test.reshape(test.shape[0],3,2,1)
 
     # Retrieve the model by using the model ID (no task_id)
@@ -35,11 +72,29 @@ if __name__ == '__main__':
 
     encoder.summary()
     
-    """
-    Predictions related to latent space
+    # Features derived by latent space
 
-    prediction = encoder.predict(test)
-    print(prediction)
-    """
+    latent_train = encoder.predict(train)
+    latent_test = encoder.predict(test)
 
-    
+    # MinMax normalization
+
+    scaler = MinMaxScaler()
+    train_minmax = scaler.fit_transform(latent_test)
+    test_minmax = scaler.transform(latent_test)
+
+    # Classification activity by using ML-based algorithms
+
+    models = {
+        "Decision Tree (J48)": DecisionTreeClassifier(criterion='entropy', min_samples_leaf=2, ccp_alpha=0.25),
+        "Random Forest": RandomForestClassifier(n_estimators=100, max_depth=None, max_features='sqrt', random_state=1),
+        "Support Vector Machine": SVC(C=1.0, kernel='rbf', tol=0.001, max_iter=-1),
+        "Naive Bayes": GaussianNB(),
+        "K-Nearest Neighbors": KNeighborsClassifier(n_neighbors=1, weights='uniform'),
+        "Logistic Regression": LogisticRegression(penalty='l2', C=1.0, solver='lbfgs', max_iter=100),
+        "Gradient Boosting": GradientBoostingClassifier(n_estimators=100, learning_rate=0.1),
+        "Neural Network": MLPClassifier(hidden_layer_sizes=(100,), learning_rate_init=0.3, momentum=0.2, max_iter=200),
+    }
+    # Test each ML-based model
+
+    test_models(models, train_minmax, test_minmax, y_train, y_test)
