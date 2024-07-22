@@ -72,7 +72,7 @@ if __name__ == '__main__':
     tf.config.set_visible_devices([], 'GPU')
 
     # load dataset from clearml
-    dataset = Dataset.get('25e9281ff0c44754ade05e4d16bf1292',alias='dataset7030')
+    dataset = Dataset.get('e3c4b1f5295f4210a18fc9fd7a49b089',alias='dataset7030')
     file_path = dataset.get_local_copy()
 
     df_train = pd.read_csv(file_path + "/" + dataset.list_files()[1])
