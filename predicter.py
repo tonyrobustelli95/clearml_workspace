@@ -80,7 +80,7 @@ if __name__ == '__main__':
     # MinMax normalization
 
     scaler = MinMaxScaler()
-    train_minmax = scaler.fit_transform(latent_test)
+    train_minmax = scaler.fit_transform(latent_train)
     test_minmax = scaler.transform(latent_test)
 
     # Classification activity by using ML-based algorithms
