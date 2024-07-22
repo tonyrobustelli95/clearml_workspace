@@ -14,8 +14,9 @@ if __name__ == "__main__":
     task_id = str(args.task_id)
 
     optimizer = HyperParameterOptimizer(base_task_id=task_id, 
-                                        hyper_parameters=[UniformIntegerParameterRange('filters', 5, 5)],
-    objective_metric_title='accuracy',
+                                        hyper_parameters=[UniformIntegerParameterRange('filters', 5, 15, step_size=2), 
+                                        UniformIntegerParameterRange('batch_size', 128, 256, step_size=64)],
+    objective_metric_title='mse',
     objective_metric_series='validation',
     objective_metric_sign='min',
     execution_queue='default'
