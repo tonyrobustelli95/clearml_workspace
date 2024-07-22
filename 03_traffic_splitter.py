@@ -35,12 +35,12 @@ def datasetSplitter(trainPercentage,categoryList):
             print("\n")
 
             train = pd.DataFrame(dfSplit[0],columns=df.columns)
-            labelTrain = np.zeros(train.__len__()).astype(int)
+            labelTrain = np.zeros(train.__len__()).astype(int) + i
             train['category'] = labelTrain
             dfListTrain.append(train)
 
             test = pd.DataFrame(dfSplit[1],columns=df.columns)
-            labelTest = np.zeros(test.__len__()).astype(int)
+            labelTest = np.zeros(test.__len__()).astype(int) + i 
             test['category'] = labelTest
             dfListTest.append(test)
     
