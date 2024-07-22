@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 params = {
     'optimizer': 'adam',
     'loss_function': 'mse',
-    'epochs': 10,
+    'epochs': 20,
     'batch_size': 128,
     'metrics': ['accuracy'],
     'filters': 10,

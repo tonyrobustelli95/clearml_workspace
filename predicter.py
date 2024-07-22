@@ -11,7 +11,18 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.neural_network import MLPClassifier
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
+models = {
+    "Decision Tree (J48)": DecisionTreeClassifier(criterion='entropy', min_samples_leaf=2, ccp_alpha=0.25),
+    "Random Forest": RandomForestClassifier(n_estimators=100, max_depth=None, max_features='sqrt', random_state=1),
+    "Support Vector Machine": SVC(C=1.0, kernel='rbf', tol=0.001, max_iter=100),
+    "Naive Bayes": GaussianNB(),
+    "K-Nearest Neighbors": KNeighborsClassifier(n_neighbors=1, weights='uniform'),
+    "Logistic Regression": LogisticRegression(penalty='l2', C=1.0, solver='lbfgs', max_iter=100),
+    "Gradient Boosting": GradientBoostingClassifier(n_estimators=100, learning_rate=0.1),
+    "Neural Network": MLPClassifier(hidden_layer_sizes=(100,), learning_rate_init=0.3, momentum=0.2, max_iter=200),
+}
 
 # Provides classification metrics for the input ML-based models 
 def test_models(models, X_train, X_test, y_train, y_test):
@@ -30,6 +41,25 @@ def test_models(models, X_train, X_test, y_train, y_test):
         print("Classification Report:")
         print(cr)
 
+def minmax(latent_train,latent_test,y_train,y_test):
+
+    print("\nMin-max normalization")
+
+    scaler = MinMaxScaler()
+    train_minmax = scaler.fit_transform(latent_train)
+    test_minmax = scaler.transform(latent_test)
+
+    test_models(models, train_minmax, test_minmax, y_train, y_test)
+
+def standardization(latent_train,latent_test,y_train,y_test):
+
+    print("\nStandardization")
+    
+    scaler = StandardScaler()
+    train_std = scaler.fit_transform(latent_train)
+    test_std = scaler.transform(latent_test)
+
+    test_models(models, train_std, test_std, y_train, y_test)
 
 if __name__ == '__main__':
 
@@ -77,24 +107,8 @@ if __name__ == '__main__':
     latent_train = encoder.predict(train)
     latent_test = encoder.predict(test)
 
-    # MinMax normalization
+    print("\nResults without scaling")
+    test_models(models, latent_train, latent_test, y_train, y_test)
 
-    scaler = MinMaxScaler()
-    train_minmax = scaler.fit_transform(latent_train)
-    test_minmax = scaler.transform(latent_test)
-
-    # Classification activity by using ML-based algorithms
-
-    models = {
-        "Decision Tree (J48)": DecisionTreeClassifier(criterion='entropy', min_samples_leaf=2, ccp_alpha=0.25),
-        "Random Forest": RandomForestClassifier(n_estimators=100, max_depth=None, max_features='sqrt', random_state=1),
-        "Support Vector Machine": SVC(C=1.0, kernel='rbf', tol=0.001, max_iter=100),
-        "Naive Bayes": GaussianNB(),
-        "K-Nearest Neighbors": KNeighborsClassifier(n_neighbors=1, weights='uniform'),
-        "Logistic Regression": LogisticRegression(penalty='l2', C=1.0, solver='lbfgs', max_iter=100),
-        "Gradient Boosting": GradientBoostingClassifier(n_estimators=100, learning_rate=0.1),
-        "Neural Network": MLPClassifier(hidden_layer_sizes=(100,), learning_rate_init=0.3, momentum=0.2, max_iter=200),
-    }
-    # Test each ML-based model
-
-    test_models(models, train_minmax, test_minmax, y_train, y_test)
+    minmax(latent_train,latent_test,y_train,y_test)
+    standardization(latent_train,latent_test,y_train,y_test)
