@@ -88,7 +88,7 @@ if __name__ == '__main__':
     models = {
         "Decision Tree (J48)": DecisionTreeClassifier(criterion='entropy', min_samples_leaf=2, ccp_alpha=0.25),
         "Random Forest": RandomForestClassifier(n_estimators=100, max_depth=None, max_features='sqrt', random_state=1),
-        "Support Vector Machine": SVC(C=1.0, kernel='rbf', tol=0.001, max_iter=-1),
+        "Support Vector Machine": SVC(C=1.0, kernel='rbf', tol=0.001, max_iter=100),
         "Naive Bayes": GaussianNB(),
         "K-Nearest Neighbors": KNeighborsClassifier(n_neighbors=1, weights='uniform'),
         "Logistic Regression": LogisticRegression(penalty='l2', C=1.0, solver='lbfgs', max_iter=100),
