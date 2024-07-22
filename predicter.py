@@ -34,7 +34,6 @@ def test_models(models, X_train, X_test, y_train, y_test):
 if __name__ == '__main__':
 
     task = Task.init(project_name='clearml-init', task_name='Autoencoder prediction')
-    task.execute_remotely(queue_name="default")
 
     # Parse input arguments
     parser = argparse.ArgumentParser(description="Script to do predictions using a model ID")
@@ -42,6 +41,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     model_id = str(args.model_id)
+    task.execute_remotely(queue_name="default")
 
     # load dataset from clearml
     dataset = Dataset.get('e3c4b1f5295f4210a18fc9fd7a49b089',alias='dataset7030v2')
