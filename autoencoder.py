@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 params = {
     'optimizer': 'adam',
     'loss_function': 'mse',
-    'epochs': 20,
+    'epochs': 1,
     'batch_size': 128,
     'metrics': ['accuracy'],
     'filters': 10,
@@ -112,6 +112,7 @@ if __name__ == '__main__':
     #ae.save(base_path + model_path)
 
     task.upload_artifact('ae_version' + str(task.id), model_path)
-    task.get_logger().report_text('Model weights logged successfully.')
+    task.update_output_model(model_path=model_path)
+    task.get_logger().report_text('Task completed.')
 
     task.close()
