@@ -107,11 +107,11 @@ if __name__ == '__main__':
     task.get_logger().report_matplotlib_figure('Loss Plot', 'Train vs Test loss', printHistory(history).gcf())
 
     # Log model
-    base_path = '/Users/antoniorobustelli/Desktop/MLOps/clearml_workspace/models/'
+    base_path = '/Users/antoniorobustelli/Desktop/MLOps/clearml_workspace/models'
     model_path = 'ae_version' + str(task.id) + '.keras'
     #ae.save(base_path + model_path)
 
-    task.upload_artifact('ae_version' + str(task.id), model_path)
+    task.upload_artifact('ae_version' + str(task.id), artifact_object=ae)
     task.update_output_model(model_path=base_path,name=model_path)
     task.get_logger().report_text('Task completed.')
 
